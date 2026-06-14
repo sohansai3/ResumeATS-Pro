@@ -34,14 +34,6 @@ The application helps users analyze how well a PDF resume matches a job descript
 - pypdf
 - ReportLab
 
-## Installation
-
-```bash
-git clone https://github.com/your-username/ResumeATS-Pro.git
-cd ResumeATS-Pro
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
 Run the Application
 python -m uvicorn main:app --reload
 Open in browser:
