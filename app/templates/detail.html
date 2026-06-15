@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATS Report {{ record.id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <nav class="topbar">
+      <a href="/">Dashboard</a>
+      <a href="/analyses/{{ record.id }}/report">Download PDF</a>
+    </nav>
+
+    <section class="report-grid">
+      <div class="score-card">
+        <p class="eyebrow">ATS Score</p>
+        <div class="score">{{ record.ats_score | round(1) }}%</div>
+        <p class="muted">{{ record.resume_filename }} · {{ record.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+      </div>
+      <div class="metric-card"><strong>{{ record.similarity_score | round(1) }}%</strong><span>Similarity</span></div>
+      <div class="metric-card"><strong>{{ record.keyword_score | round(1) }}%</strong><span>Keyword match</span></div>
+      <div class="metric-card"><strong>{{ record.skill_score | round(1) }}%</strong><span>Skill match</span></div>
+    </section>
+
+    <section class="detail-grid">
+      <article class="panel">
+        <h2>Matched Skills</h2>
+        <div class="chips">
+          {% for skill in matched_skills %}<span class="chip good">{{ skill }}</span>{% else %}<p class="muted">No matched skills detected.</p>{% endfor %}
+        </div>
+      </article>
+      <article class="panel">
+        <h2>Missing Skills</h2>
+        <div class="chips">
+          {% for skill in missing_skills %}<span class="chip warn">{{ skill }}</span>{% else %}<p class="muted">No required skills appear to be missing.</p>{% endfor %}
+        </div>
+      </article>
+      <article class="panel">
+        <h2>Missing Keywords</h2>
+        <div class="chips">
+          {% for keyword in missing_keywords[:24] %}<span class="chip">{{ keyword }}</span>{% else %}<p class="muted">No major keyword gaps detected.</p>{% endfor %}
+        </div>
+      </article>
+      <article class="panel">
+        <h2>Suggestions</h2>
+        <ul class="suggestions">
+          {% for suggestion in suggestions %}<li>{{ suggestion }}</li>{% endfor %}
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

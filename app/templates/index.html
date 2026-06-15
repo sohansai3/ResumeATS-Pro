@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume ATS Score Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <section class="workspace">
+      <div class="panel form-panel">
+        <div class="heading">
+          <p class="eyebrow">Resume Intelligence</p>
+          <h1>ATS Score Analyzer</h1>
+        </div>
+
+        {% if errors %}
+          <div class="alert">
+            {% for error in errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="form-stack">
+          <label>Resume PDF
+            <input name="resume_pdf" type="file" accept="application/pdf" required>
+          </label>
+          <label>Job Description
+            <textarea name="job_description_text" rows="10"></textarea>
+          </label>
+          <label>Job Description File
+            <input name="job_description_file" type="file" accept="application/pdf,text/plain">
+          </label>
+          <button type="submit">Analyze Resume</button>
+        </form>
+      </div>
+
+      <aside class="panel result-panel">
+        {% if result %}
+          <p class="eyebrow">Latest Analysis</p>
+          <div class="score">{{ result.ats_score | round(1) }}%</div>
+          <p class="risk">Skill match: <strong>{{ result.skill_score | round(1) }}%</strong></p>
+          <p class="muted">{{ result.resume_filename }} was saved to dashboard history.</p>
+          <a class="button-link" href="/analyses/{{ result.id }}">View details</a>
+          <a class="button-link secondary" href="/analyses/{{ result.id }}/report">Download PDF</a>
+        {% else %}
+          <p class="eyebrow">Analyzer Ready</p>
+          <div class="score neutral">ATS</div>
+          <p class="risk">Upload a resume and job description to calculate fit.</p>
+        {% endif %}
+      </aside>
+    </section>
+
+    <section class="history">
+      <h2>Dashboard</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Resume</th>
+              <th>ATS Score</th>
+              <th>Similarity</th>
+              <th>Skills</th>
+              <th>Created</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in analyses %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td><a href="/analyses/{{ item.id }}">{{ item.resume_filename }}</a></td>
+                <td><strong>{{ item.ats_score | round(1) }}%</strong></td>
+                <td>{{ item.similarity_score | round(1) }}%</td>
+                <td>{{ item.skill_score | round(1) }}%</td>
+                <td>{{ item.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td><a href="/analyses/{{ item.id }}/report">PDF</a></td>
+              </tr>
+            {% else %}
+              <tr><td colspan="6" class="empty">No analyses yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
